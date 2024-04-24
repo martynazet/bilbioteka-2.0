@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Domowa biblioteka</title>
+        <style>
+            table, th, tr, td {border: 1px solid black; text-align: center;}
+            
+        </style>
+    </head>
+    <body>
+        <h1>Domowa biblioteka</h1>
+
+        <table>
+            <thead style="background-color:yellow">
+                <th style="width:20%">Tytuł</th>
+                <th style="width:20%">Autor</th>
+                <th style="width:20%">Status</th>
+                <th style="width:20%">Wypożyczył/a</th>
+                <th style="width:20%">Akcje</th>
+            </thead>
+            {% for book in books %}
+                <tr>
+                    <td><a href="/library/{{book.id}}">{{book.title}}</a></td>
+                    <td>
+                        {% for author in book.authors %}
+                            {{author.name}}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {{book.status}}
+                    </td>
+                    <td>
+                        {% if book.borrows %}
+                            {{book.borrows[-1].borrower_name}}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if book.status == 'Na półce' %}
+                            <form method="POST" action="/library/">
+                                <input type="hidden" name="book_id" value="{{book.id}}">
+                                <input type="text" name="borrower_name" placeholder="Imię" required>
+                                <input type="submit" name='action' value="Wypożyczenie" onclick="this.form.submit(); return false;">
+                            </form>
+                        {% elif book.status == 'Wypożyczona' %}
+                            <form method="POST" action="/library/">
+                                <input type="hidden" name="book_id" value="{{book.id}}">
+                                <input type="submit" name='action' value="Zwróć" onclick="this.form.submit(); return false;">
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <div>
+            <h2 ><i>Dodaj nową książkę: </i></h2>
+            <form method="POST" action="/library/add_book">
+                <table style="border-collapse:collapse">
+                    <tr>
+                        <th style="width:40%">Tytuł</th>
+                        <td><input type='text' name='title' required></td>
+                    </tr>
+                    <tr>
+                        <th style="width:40%">Autor</th>
+                        <td><input type='text' name='author' required></td>
+                    </tr>
+                </table>
+                <input type="submit" value="Zapisz" style="width:300px">
+            </form>
+        </div>
+
+    </body>
+</html>

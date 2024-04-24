@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Szczegóły książki</title>
+    </head>
+    <body>
+        <h2>Zmień: </h2>
+        <form method="POST" action="/library/{{book.id}}/">
+            <table>
+                <tr>
+                    <th>Tytuł</th>
+                    <td><input type="text" name="title" value="{{book.title}}"></td>
+                </tr>
+                <tr>
+                    <th>Autor</th>
+                    <td><input type="text" name="author" value="{% for author in book.authors %}{{author.name}}{% if not loop.last %}, {% endif %}{% endfor %}"></td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td>
+                        <select name="status">
+                            <option value="Na półce" {% if book.status == "Na półce" %}selected{% endif %}>Na półce</option>
+                            <option value="Wypożyczona" {% if book.status == "Wypożyczona" %}selected{% endif %}>Wypożyczona</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Wypożyczył/a</th>
+                    <td><input type="text" name="borrower_name" value="{{ book.borrows[-1].borrower_name if book.borrows else '' }}"></td>
+                </tr>
+            </table>
+            <input type="submit" value="Zapisz">
+        </form>
+        <a href="/library/">Powrót do listy książek</a>
+    </body>
+</html>
